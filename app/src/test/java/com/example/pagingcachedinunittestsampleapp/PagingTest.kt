@@ -6,7 +6,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -25,10 +24,8 @@ class PagingTest {
         }
         var invokeCount = 0
 
-        val scope = TestScope()
-
         val job = launch {
-            testFlow.cachedIn(scope).collect {
+            testFlow.cachedIn(this).collect {
                 invokeCount++
             }
         }
