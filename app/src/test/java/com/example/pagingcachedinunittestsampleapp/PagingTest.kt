@@ -5,6 +5,7 @@ import androidx.paging.cachedIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -28,6 +29,26 @@ class PagingTest {
 
         val job = launch {
             testFlow.cachedIn(scope).collect {
+                invokeCount++
+            }
+        }
+
+        advanceUntilIdle()
+
+        job.cancel()
+
+        assertEquals(1, invokeCount)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `paging cachedIn collect more advanced`() = runTest {
+        var invokeCount = 0
+
+        val vm = TestScopeViewModel(StandardTestDispatcher())
+
+        val job = launch {
+            vm.flow2.collect {
                 invokeCount++
             }
         }
